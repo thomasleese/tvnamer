@@ -1,14 +1,38 @@
 #!/usr/bin/env node
 
+var async = require("async");
+var fs = require("fs");
 var optimist = require("optimist");
 var tvnamer = require("../");
 
-var showPaths = optimist.argv._;
-for (var i = 0; i < showPaths.length; i++) {
-	console.log("Renaming", showPaths[i]);
+var waitForResponse = function(callback) {
+	var stdin = process.stdin;
 	
-	tvnamer(showPaths[i], function(err, paths) {
-		console.log(err);
-		console.log(paths);
+	stdin.resume();
+	stdin.setEncoding("utf8");
+	stdin.once("data", function(data) {
+		stdin.pause();
+		callback();
 	});
-}
+};
+
+async.each(optimist.argv._, function(showPath, next) {
+	console.log("Renaming", showPath);
+		
+	tvnamer(showPath, function(err, paths) {
+		for (var key in paths) {
+			console.log(" ", key, "->", paths[key]);
+		}
+		
+		console.log("Continue?");
+		waitForResponse(function() {
+			for (var key in paths) {
+				fs.renameSync(key, paths[key]);
+			}
+			
+			next();
+		});
+	});
+}, function(err) {
+	
+});
