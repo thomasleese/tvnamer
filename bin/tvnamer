@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+var optimist = require("optimist");
+var tvnamer = require("../");
+
+var showPaths = optimist.argv._;
+for (var i = 0; i < showPaths.length; i++) {
+	console.log("Renaming", showPaths[i]);
+	
+	tvnamer(showPaths[i], function(err, paths) {
+		console.log(err);
+		console.log(paths);
+	});
+}

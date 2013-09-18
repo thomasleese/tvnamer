@@ -1,0 +1,22 @@
+{
+	"name": "tvnamer",
+	"version": "0.1.0",
+	"description": "A program to automatically rename your TV video files using the IMDB.",
+	
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/tomleese/tvnamer.git"
+	},
+	
+	"dependencies": {
+		"async": "0.2.x",
+		"imdb-api": "1.3.x",
+		"optimist": "0.6.x"
+	},
+	
+	"main": "./lib/tvnamer",
+	
+	"bin": {
+		"tvnamer": "./bin/tvnamer"
+	}
+}
