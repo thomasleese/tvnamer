@@ -5,8 +5,6 @@
 
 #include "thetvdb.h"
 
-#define API_KEY "enter your api key here"
-
 static int sID = 0;
 
 struct EpisodeDef {
@@ -17,8 +15,8 @@ struct EpisodeDef {
     int episodeNum;
 };
 
-TheTVDB::TheTVDB(QObject *parent) :
-    QObject(parent) {
+TheTVDB::TheTVDB(QObject *parent) : QObject(parent) {
+    
 }
 
 int TheTVDB::searchShows(QString name) {
@@ -33,20 +31,23 @@ int TheTVDB::searchShows(QString name) {
 }
 
 void TheTVDB::getSeasons(Show show) {
-    QString url = "http://www.thetvdb.com/api/" API_KEY "/series/" + QString::number(show.id) + "/all/en.xml";
+    QString key = QSettings(this).value("api_key").toString();
+    QString url = "http://www.thetvdb.com/api/" + key + "/series/" + QString::number(show.id) + "/all/en.xml";
     QNetworkReply *reply = mNetAccessMgr.get(QNetworkRequest(url));
     reply->setProperty("show", QVariant::fromValue(show));
     connect(reply, SIGNAL(finished()), this, SLOT(on_reply_finished()));
 }
 
 void TheTVDB::getEpisodes(Season season) {
-    QString url = "http://www.thetvdb.com/api/" API_KEY "/series/" + QString::number(season.show.id) + "/all/en.xml";
+    QString key = QSettings(this).value("api_key").toString();
+    QString url = "http://www.thetvdb.com/api/" + key + "/series/" + QString::number(season.show.id) + "/all/en.xml";
     QNetworkReply *reply = mNetAccessMgr.get(QNetworkRequest(url));
     reply->setProperty("season", QVariant::fromValue(season));
     connect(reply, SIGNAL(finished()), this, SLOT(on_reply_finished()));
 }
 
 void TheTVDB::on_reply_finished() {
+    QString key = QSettings(this).value("api_key").toString();
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     QXmlStreamReader xml(reply);
     
@@ -71,7 +72,7 @@ void TheTVDB::on_reply_finished() {
         }
         
         emit foundShows(reply->property("id").toInt(), shows);
-    } else if (reply->url().path().startsWith("/api/" API_KEY "/series/")) {
+    } else if (reply->url().path().startsWith("/api/" + key + "/series/")) {
         QList<EpisodeDef> episodesDefs;
         EpisodeDef curEpisodeDef;
                 

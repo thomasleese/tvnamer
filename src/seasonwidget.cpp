@@ -75,7 +75,9 @@ void SeasonWidget::saveChanges() {
         QString oldFilename = item->text(0);
         QString newFilename = item->text(1);
         
-        QFile(oldFilename).rename(newFilename);
+        if (!QFile(oldFilename).rename(newFilename)) {
+            qDebug() << "failed to rename" << oldFilename << "to" << newFilename;
+        }
         
         ui->textDirectory->setText(ui->textDirectory->text());
     }
@@ -106,6 +108,15 @@ void SeasonWidget::on_textDirectory_textChanged(const QString &path) {
             QString newFilename = dir.filePath(num + " - " + episode.name + ext);
             
             QTreeWidgetItem *item = new QTreeWidgetItem(QStringList() << oldFilename << newFilename);
+            
+            if (newFilename == oldFilename) {
+                item->setTextColor(0, QColor("green"));
+                item->setTextColor(1, QColor("green"));
+            } else {
+                item->setTextColor(0, QColor("red"));
+                item->setTextColor(1, QColor("red"));
+            }
+
             ui->treeEpisodes->addTopLevelItem(item);
         }
     }

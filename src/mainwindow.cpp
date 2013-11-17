@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QSettings>
+#include <QInputDialog>
 
 #include "thetvdb.h"
 #include "seasonwidget.h"
@@ -13,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
+
+    mSettings = new QSettings(this);
     
     mDatabase = new TheTVDB(this);
     connect(mDatabase, SIGNAL(foundSeasons(QList<Season>)), this, SLOT(on_mDatabase_foundSeasons(QList<Season>)));
@@ -20,11 +23,17 @@ MainWindow::MainWindow(QWidget *parent) :
     
     ui->treeSeasons->setContextMenuPolicy(Qt::ActionsContextMenu);
     ui->treeSeasons->addAction(ui->actionRemove);
-    
-    mSettings = new QSettings("Tim32", "TV-Namer", this);
-    if (mSettings->value("first_run", true).toBool()) {
+
+    if (mSettings->value("api_key", QString()).toString().isEmpty()) {
         QMessageBox::warning(this, "Welcome!", "As with all great things, this piece of software comes with a warning.<br /><br />Once you press Save Changes, your files will be renamed: It is important that you have checked all the files before racing ahead and pressing Save Changes.<br /><br />To get started, hover over each of the 3 main buttons at the top and ensure you have read the tooltips.");
-        mSettings->setValue("first_run", false);
+
+        bool ok;
+        QString key = QInputDialog::getText(this, "API Key", "TheTVDB.com API Key", QLineEdit::Normal, QString(), &ok);
+        if (!ok || key.isEmpty()) {
+            QMessageBox::warning(this, "Invalid Key", "A valid key will need to be entered before using this software.");
+        }
+
+        mSettings->setValue("api_key", key);
     }
 }
 

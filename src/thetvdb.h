@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMetaType>
 #include <QNetworkAccessManager>
+#include <QSettings>
 
 struct Show {
     int id;
