@@ -42,6 +42,11 @@
     <widget class="QTreeWidget" name="treeEpisodes">
      <column>
       <property name="text">
+       <string>Episode</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Original File</string>
       </property>
      </column>

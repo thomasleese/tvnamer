@@ -1,13 +1,24 @@
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QDebug>
 
 #include "thetvdb.h"
 #include "seasonwidget.h"
 #include "ui_seasonwidget.h"
 
+static QString pad(int number) {
+    if (number < 10) {
+        return "0" + QString::number(number);
+    }
+
+    return QString::number(number);
+}
+
 QString findBestSeasonFile(QDir dir, Season season) {
     foreach (QFileInfo info, dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
         if (info.fileName().contains(QString::number(season.num))) {
+            return info.absoluteFilePath();
+        } else if (info.fileName().contains(QChar(season.num + 64))) {
             return info.absoluteFilePath();
         }
     }
@@ -23,30 +34,53 @@ QString findBestEpisodeFile(QDir dir, Episode episode) {
     
     QFileInfoList list = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
     
-    QString num = episode.num < 10 ? "0" + QString::number(episode.num) : QString::number(episode.num);
+    QString num = pad(episode.num);
+    QStringList prospectiveFiles;
+
+    // Episode Name
+    foreach (QFileInfo info, list) {
+        if (info.fileName().toLower().contains(episode.name.toLower())) {
+            return info.absoluteFilePath(); // this is clearly a proper match
+        }
+    }
     
     // File.S06E01
     foreach (QFileInfo info, list) {
         if (info.fileName().toLower().contains("e" + num)) {
-            return info.absoluteFilePath();
+            prospectiveFiles << info.absoluteFilePath();
         }
     }
     
     // File.06x01
     foreach (QFileInfo info, list) {
         if (info.fileName().contains(num)) {
-            return info.absoluteFilePath();
+            prospectiveFiles << info.absoluteFilePath();
         }
     }
     
     // File.6x1
     foreach (QFileInfo info, list) {
         if (info.fileName().contains(QString::number(episode.num))) {
-            return info.absoluteFilePath();
+            prospectiveFiles << info.absoluteFilePath();
         }
     }
-    
-    return QString();
+
+    prospectiveFiles = prospectiveFiles.toSet().toList();
+
+    // pick the result
+    if (prospectiveFiles.size() == 1) {
+        return prospectiveFiles[0];
+    } else if (prospectiveFiles.size() == 0) {
+        return QString();
+    } else {
+        bool ok;
+        QString item = QInputDialog::getItem(0, "Pick best file", episode.season.show.name + " - " + pad(episode.season.num) + " - " + pad(episode.num) + " - " + episode.name, prospectiveFiles, 0, true, &ok);
+        if (ok) {
+            return item;
+        } else {
+            return QString();
+        }
+    }
 }
 
 SeasonWidget::SeasonWidget(Season season, QWidget *parent) :
@@ -72,11 +106,14 @@ void SeasonWidget::saveChanges() {
     for (int i = 0; i < ui->treeEpisodes->topLevelItemCount(); i++) {
         QTreeWidgetItem *item = ui->treeEpisodes->topLevelItem(i);
         
-        QString oldFilename = item->text(0);
-        QString newFilename = item->text(1);
+        QString oldFilename = item->text(1);
+        QString newFilename = item->text(2);
         
-        if (!QFile(oldFilename).rename(newFilename)) {
-            qDebug() << "failed to rename" << oldFilename << "to" << newFilename;
+        if (!oldFilename.isNull() && !newFilename.isNull() && oldFilename != newFilename) {
+            qDebug() << "renaming" << oldFilename << "to" << newFilename;
+            if (!QFile(oldFilename).rename(newFilename)) {
+                qDebug() << "failed to rename" << oldFilename << "to" << newFilename;
+            }
         }
         
         ui->textDirectory->setText(ui->textDirectory->text());
@@ -102,25 +139,32 @@ void SeasonWidget::on_textDirectory_textChanged(const QString &path) {
     QDir dir(path);
     foreach (Episode episode, mEpisodes) {
         QString oldFilename = findBestEpisodeFile(dir, episode);
-        if (!oldFilename.isNull()) {
+
+        QTreeWidgetItem *item;
+        if (oldFilename.isNull()) {
+            item = new QTreeWidgetItem(QStringList() << pad(episode.num) + " - " + episode.name << path << path);
+            item->setTextColor(1, QColor("red"));
+            item->setTextColor(2, QColor("red"));
+        } else {
             QString ext = oldFilename.right(oldFilename.length() - oldFilename.lastIndexOf("."));
             QString num = episode.num < 10 ? "0" + QString::number(episode.num) : QString::number(episode.num);
             QString newFilename = dir.filePath(num + " - " + episode.name + ext);
             
-            QTreeWidgetItem *item = new QTreeWidgetItem(QStringList() << oldFilename << newFilename);
-            
+            item = new QTreeWidgetItem(QStringList() << pad(episode.num) + " - " + episode.name << oldFilename << newFilename);
             if (newFilename == oldFilename) {
-                item->setTextColor(0, QColor("green"));
                 item->setTextColor(1, QColor("green"));
+                item->setTextColor(2, QColor("green"));
             } else {
-                item->setTextColor(0, QColor("red"));
-                item->setTextColor(1, QColor("red"));
+                item->setTextColor(1, QColor("orange"));
+                item->setTextColor(2, QColor("orange"));
             }
-
-            ui->treeEpisodes->addTopLevelItem(item);
         }
+
+        item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled);
+        ui->treeEpisodes->addTopLevelItem(item);
     }
     
     ui->treeEpisodes->resizeColumnToContents(0);
     ui->treeEpisodes->resizeColumnToContents(1);
+    ui->treeEpisodes->resizeColumnToContents(2);
 }

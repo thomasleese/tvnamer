@@ -120,6 +120,8 @@ void MainWindow::on_actionSaveChanges_triggered() {
             SeasonWidget *widget = static_cast<SeasonWidget *>(ui->stackedSeasons->widget(i));
             widget->saveChanges();
         }
+
+        QMessageBox::information(this, "Complete", "All files have been renamed.");
     }
 }
 
