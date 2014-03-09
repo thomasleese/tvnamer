@@ -20,11 +20,15 @@ ui_*.h
 Makefile*
 build-*
 
-# QtCreator
-
-*.autosave
-
 # TVNamer
 
 my-api-key
+build
 
+# CMake
+
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+install_manifest.txt
