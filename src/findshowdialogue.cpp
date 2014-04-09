@@ -13,9 +13,7 @@ public:
 
 
 FindShowDialogue::FindShowDialogue(QWidget *parent) :
-    QDialog(parent),
-    d(new FindShowDialoguePrivate()),
-    ui(new Ui::FindShowDialogue) {
+    QDialog(parent), d(new FindShowDialoguePrivate), ui(new Ui::FindShowDialogue) {
     ui->setupUi(this);
 
     connect(this, SIGNAL(accepted()), this, SLOT(on_FindShowDialogue_accepted()));

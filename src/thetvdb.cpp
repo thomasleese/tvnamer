@@ -15,25 +15,33 @@ struct EpisodeDef {
     int episodeNum;
 };
 
-TheTVDB::TheTVDB(QObject *parent) : QObject(parent) {
-    
+
+class TheTVDBPrivate {
+public:
+    QNetworkAccessManager netAccessMgr;
+};
+
+
+TheTVDB::TheTVDB(QObject *parent) :
+    QObject(parent), d(new TheTVDBPrivate) {
+
 }
 
 int TheTVDB::searchShows(QString name) {
     sID++;
-    
+
     QString url = "http://www.thetvdb.com/api/GetSeries.php?seriesname=" + name;
-    QNetworkReply *reply = mNetAccessMgr.get(QNetworkRequest(url));
+    QNetworkReply *reply = d->netAccessMgr.get(QNetworkRequest(url));
     reply->setProperty("id", QVariant(sID));
     connect(reply, SIGNAL(finished()), this, SLOT(on_reply_finished()));
-    
+
     return sID;
 }
 
 void TheTVDB::getSeasons(Show show) {
     QString key = QSettings(this).value("api_key").toString();
     QString url = "http://www.thetvdb.com/api/" + key + "/series/" + QString::number(show.id) + "/all/en.xml";
-    QNetworkReply *reply = mNetAccessMgr.get(QNetworkRequest(url));
+    QNetworkReply *reply = d->netAccessMgr.get(QNetworkRequest(url));
     reply->setProperty("show", QVariant::fromValue(show));
     connect(reply, SIGNAL(finished()), this, SLOT(on_reply_finished()));
 }
@@ -41,7 +49,7 @@ void TheTVDB::getSeasons(Show show) {
 void TheTVDB::getEpisodes(Season season) {
     QString key = QSettings(this).value("api_key").toString();
     QString url = "http://www.thetvdb.com/api/" + key + "/series/" + QString::number(season.show.id) + "/all/en.xml";
-    QNetworkReply *reply = mNetAccessMgr.get(QNetworkRequest(url));
+    QNetworkReply *reply = d->netAccessMgr.get(QNetworkRequest(url));
     reply->setProperty("season", QVariant::fromValue(season));
     connect(reply, SIGNAL(finished()), this, SLOT(on_reply_finished()));
 }
@@ -50,14 +58,14 @@ void TheTVDB::on_reply_finished() {
     QString key = QSettings(this).value("api_key").toString();
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     QXmlStreamReader xml(reply);
-    
+
     if (reply->url().path() == "/api/GetSeries.php") {
         QList<Show> shows;
         Show curShow;
-        
+
         while (!xml.atEnd()) {
             xml.readNext();
-            
+
             if (xml.name() == "Series") {
                 if (xml.isStartElement()) {
                     curShow = Show();
@@ -70,15 +78,15 @@ void TheTVDB::on_reply_finished() {
                 curShow.name = xml.readElementText();
             }
         }
-        
+
         emit foundShows(reply->property("id").toInt(), shows);
     } else if (reply->url().path().startsWith("/api/" + key + "/series/")) {
         QList<EpisodeDef> episodesDefs;
         EpisodeDef curEpisodeDef;
-                
+
         while (!xml.atEnd()) {
             xml.readNext();
-            
+
             if (xml.name() == "Episode") {
                 if (xml.isStartElement()) {
                     curEpisodeDef = EpisodeDef();
@@ -97,12 +105,12 @@ void TheTVDB::on_reply_finished() {
                 curEpisodeDef.episodeName = xml.readElementText();
             }
         }
-        
+
         if (!reply->property("show").isNull()) {
             // clearly we are meant to be listing all the seasons for a show :)
             Show show = reply->property("show").value<Show>();
             QList<Season> seasons;
-                        
+
             foreach (EpisodeDef def, episodesDefs) {
                 bool inList = false;
                 foreach (Season season, seasons) {
@@ -110,7 +118,7 @@ void TheTVDB::on_reply_finished() {
                         inList = true;
                     }
                 }
-                
+
                 // for this, we don't really want the specials
                 if (!inList && def.seasonNum > 0) {
                     Season season;
@@ -120,12 +128,12 @@ void TheTVDB::on_reply_finished() {
                     seasons.append(season);
                 }
             }
-            
+
             emit foundSeasons(seasons);
         } else if (!reply->property("season").isNull()) {
             Season season = reply->property("season").value<Season>();
             QList<Episode> episodes;
-            
+
             foreach (EpisodeDef def, episodesDefs) {
                 if (def.seasonId == season.id) {
                     Episode episode;
@@ -136,7 +144,7 @@ void TheTVDB::on_reply_finished() {
                     episodes.append(episode);
                 }
             }
-            
+
             emit foundEpisodes(episodes);
         }
     } else {
