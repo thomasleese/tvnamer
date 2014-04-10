@@ -83,19 +83,27 @@ QString findBestEpisodeFile(QDir dir, Episode episode) {
     }
 }
 
+
+class SeasonWidgetPrivate {
+public:
+    QList<Episode> episodes;
+    TheTVDB *database;
+    QString dir;
+};
+
+
 SeasonWidget::SeasonWidget(Season season, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::SeasonWidget) {
+    QWidget(parent), d(new SeasonWidgetPrivate), ui(new Ui::SeasonWidget) {
     ui->setupUi(this);
 
     if (!season.show.autoDir.isNull()) {
         QDir autoDir(season.show.autoDir);
-        mDir = findBestSeasonFile(autoDir, season);
+        d->dir = findBestSeasonFile(autoDir, season);
     }
 
-    mDatabase = new TheTVDB(this);
-    mDatabase->getEpisodes(season);
-    connect(mDatabase, SIGNAL(foundEpisodes(QList<Episode>)), this, SLOT(on_mDatabase_foundEpisodes(QList<Episode>)));
+    d->database = new TheTVDB(this);
+    d->database->getEpisodes(season);
+    connect(d->database, SIGNAL(foundEpisodes(QList<Episode>)), this, SLOT(on_mDatabase_foundEpisodes(QList<Episode>)));
 }
 
 SeasonWidget::~SeasonWidget() {
@@ -121,8 +129,8 @@ void SeasonWidget::saveChanges() {
 }
 
 void SeasonWidget::on_mDatabase_foundEpisodes(const QList<Episode> &episodes) {
-    mEpisodes = episodes;
-    ui->textDirectory->setText(mDir);
+    d->episodes = episodes;
+    ui->textDirectory->setText(d->dir);
     setEnabled(true);
 }
 
@@ -137,7 +145,7 @@ void SeasonWidget::on_textDirectory_textChanged(const QString &path) {
     ui->treeEpisodes->model()->removeRows(0, ui->treeEpisodes->topLevelItemCount());
 
     QDir dir(path);
-    foreach (Episode episode, mEpisodes) {
+    foreach (Episode episode, d->episodes) {
         QString oldFilename = findBestEpisodeFile(dir, episode);
 
         QTreeWidgetItem *item;
