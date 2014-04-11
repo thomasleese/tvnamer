@@ -20,11 +20,11 @@ namespace Ui {
 class MainWindow : public QMainWindow {
 
     Q_OBJECT
-    
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    
+
 private slots:
     void on_mDatabase_foundShows(int id, const QList<Show> &shows);
     void on_mDatabase_foundSeasons(const QList<Season> &seasons);
@@ -33,15 +33,12 @@ private slots:
     void on_actionFindShow_triggered();
     void on_actionSaveChanges_triggered();
     void on_actionRemove_triggered();
-    
+
 private:
     void removeItem(QTreeWidgetItem *item);
-    
+
     Ui::MainWindow *ui;
-    TheTVDB *mDatabase;
-    QMap<QTreeWidgetItem *, SeasonWidget *> mSeasonWidgets;
-    QMap<int, QString> mTempAutoDirs;
-    QSettings *mSettings;
+    class MainWindowPrivate *d;
 
 };
 
