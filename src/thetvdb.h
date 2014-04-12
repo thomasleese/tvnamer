@@ -40,6 +40,7 @@ class TheTVDB : public QObject {
 
 public:
     explicit TheTVDB(QObject *parent = 0);
+    ~TheTVDB();
 
     int searchShows(QString name);
     void getSeasons(Show show);

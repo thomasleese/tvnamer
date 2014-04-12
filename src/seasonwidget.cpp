@@ -108,6 +108,7 @@ SeasonWidget::SeasonWidget(Season season, QWidget *parent) :
 
 SeasonWidget::~SeasonWidget() {
     delete ui;
+    delete d;
 }
 
 void SeasonWidget::saveChanges() {

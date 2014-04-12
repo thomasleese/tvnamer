@@ -27,6 +27,10 @@ TheTVDB::TheTVDB(QObject *parent) :
 
 }
 
+TheTVDB::~TheTVDB() {
+
+}
+
 int TheTVDB::searchShows(QString name) {
     sID++;
 

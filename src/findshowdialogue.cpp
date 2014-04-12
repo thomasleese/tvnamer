@@ -25,6 +25,7 @@ FindShowDialogue::FindShowDialogue(QWidget *parent) :
 FindShowDialogue::~FindShowDialogue() {
     delete ui;
     delete d->database;
+    delete d;
 }
 
 Show FindShowDialogue::getCurrentShow() const {
