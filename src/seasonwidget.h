@@ -22,7 +22,7 @@ public:
     void saveChanges();
 
 private slots:
-    void on_mDatabase_foundEpisodes(const QList<Episode> &episodes);
+    void on_database_foundEpisodes(const QList<Episode> &episodes);
     void on_btnBrowse_clicked();
     void on_textDirectory_textChanged(const QString &arg1);
 

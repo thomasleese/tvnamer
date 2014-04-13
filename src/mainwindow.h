@@ -26,8 +26,8 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_mDatabase_foundShows(int id, const QList<Show> &shows);
-    void on_mDatabase_foundSeasons(const QList<Season> &seasons);
+    void on_database_foundShows(int id, const QList<Show> &shows);
+    void on_database_foundSeasons(const QList<Season> &seasons);
     void on_treeSeasons_itemActivated(QTreeWidgetItem *item, int column);
     void on_actionAutoAddShows_triggered();
     void on_actionFindShow_triggered();

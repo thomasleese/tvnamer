@@ -21,10 +21,10 @@ public:
     Show getCurrentShow() const;
 
 private slots:
-    void on_mDatabase_foundShows(int id, const QList<Show> &shows);
+    void on_accepted();
+    void on_database_foundShows(int id, const QList<Show> &shows);
     void on_textShow_textEdited(const QString &arg1);
     void on_listShows_doubleClicked(const QModelIndex &index);
-    void on_FindShowDialogue_accepted();
     void on_btnBrowse_clicked();
 
 private:

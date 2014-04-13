@@ -16,10 +16,10 @@ FindShowDialogue::FindShowDialogue(QWidget *parent) :
     QDialog(parent), d(new FindShowDialoguePrivate), ui(new Ui::FindShowDialogue) {
     ui->setupUi(this);
 
-    connect(this, SIGNAL(accepted()), this, SLOT(on_FindShowDialogue_accepted()));
+    connect(this, SIGNAL(accepted()), this, SLOT(on_accepted()));
 
     d->database = new TheTVDB(this);
-    connect(d->database, SIGNAL(foundShows(int,QList<Show>)), this, SLOT(on_mDatabase_foundShows(int,QList<Show>)));
+    connect(d->database, SIGNAL(foundShows(int,QList<Show>)), this, SLOT(on_database_foundShows(int,QList<Show>)));
 }
 
 FindShowDialogue::~FindShowDialogue() {
@@ -34,7 +34,7 @@ Show FindShowDialogue::getCurrentShow() const {
     return show;
 }
 
-void FindShowDialogue::on_mDatabase_foundShows(int id, const QList<Show> &shows) {
+void FindShowDialogue::on_database_foundShows(int id, const QList<Show> &shows) {
     Q_UNUSED(id)
 
     d->shows = shows;
@@ -55,7 +55,7 @@ void FindShowDialogue::on_listShows_doubleClicked(const QModelIndex &index) {
     accept();
 }
 
-void FindShowDialogue::on_FindShowDialogue_accepted() {
+void FindShowDialogue::on_accepted() {
     if (ui->listShows->currentRow() < 0) {
         setResult(QDialog::Rejected);
     }

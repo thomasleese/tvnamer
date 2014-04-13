@@ -103,7 +103,7 @@ SeasonWidget::SeasonWidget(Season season, QWidget *parent) :
 
     d->database = new TheTVDB(this);
     d->database->getEpisodes(season);
-    connect(d->database, SIGNAL(foundEpisodes(QList<Episode>)), this, SLOT(on_mDatabase_foundEpisodes(QList<Episode>)));
+    connect(d->database, SIGNAL(foundEpisodes(QList<Episode>)), this, SLOT(on_database_foundEpisodes(QList<Episode>)));
 }
 
 SeasonWidget::~SeasonWidget() {
@@ -129,7 +129,7 @@ void SeasonWidget::saveChanges() {
     }
 }
 
-void SeasonWidget::on_mDatabase_foundEpisodes(const QList<Episode> &episodes) {
+void SeasonWidget::on_database_foundEpisodes(const QList<Episode> &episodes) {
     d->episodes = episodes;
     ui->textDirectory->setText(d->dir);
     setEnabled(true);

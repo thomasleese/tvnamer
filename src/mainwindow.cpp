@@ -27,8 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     d->settings = new QSettings(this);
 
     d->database = new TheTVDB(this);
-    connect(d->database, SIGNAL(foundSeasons(QList<Season>)), this, SLOT(on_mDatabase_foundSeasons(QList<Season>)));
-    connect(d->database, SIGNAL(foundShows(int,QList<Show>)), this, SLOT(on_mDatabase_foundShows(int,QList<Show>)));
+    connect(d->database, SIGNAL(foundSeasons(QList<Season>)), this, SLOT(on_database_foundSeasons(QList<Season>)));
+    connect(d->database, SIGNAL(foundShows(int,QList<Show>)), this, SLOT(on_database_foundShows(int,QList<Show>)));
 
     ui->treeSeasons->setContextMenuPolicy(Qt::ActionsContextMenu);
     ui->treeSeasons->addAction(ui->actionRemove);
@@ -53,7 +53,7 @@ MainWindow::~MainWindow() {
     delete d;
 }
 
-void MainWindow::on_mDatabase_foundShows(int id, const QList<Show> &shows) {
+void MainWindow::on_database_foundShows(int id, const QList<Show> &shows) {
     if (shows.count() > 0) {
         Show show = shows[0];
         show.autoDir = d->tempAutoDirs[id];
@@ -61,7 +61,7 @@ void MainWindow::on_mDatabase_foundShows(int id, const QList<Show> &shows) {
     }
 }
 
-void MainWindow::on_mDatabase_foundSeasons(const QList<Season> &seasons) {
+void MainWindow::on_database_foundSeasons(const QList<Season> &seasons) {
     if (seasons.count() > 0) {
         Show show = seasons[0].show;
 
