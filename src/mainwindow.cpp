@@ -27,8 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     d->settings = new QSettings(this);
 
     d->database = new TheTVDB(this);
-    connect(d->database, SIGNAL(foundSeasons(QList<Season>)), this, SLOT(on_database_foundSeasons(QList<Season>)));
-    connect(d->database, SIGNAL(foundShows(int,QList<Show>)), this, SLOT(on_database_foundShows(int,QList<Show>)));
+    connect(d->database, &TheTVDB::foundSeasons, this, &MainWindow::on_database_foundSeasons);
+    connect(d->database, &TheTVDB::foundShows, this, &MainWindow::on_database_foundShows);
 
     ui->treeSeasons->setContextMenuPolicy(Qt::ActionsContextMenu);
     ui->treeSeasons->addAction(ui->actionRemove);

@@ -103,7 +103,7 @@ SeasonWidget::SeasonWidget(Season season, QWidget *parent) :
 
     d->database = new TheTVDB(this);
     d->database->getEpisodes(season);
-    connect(d->database, SIGNAL(foundEpisodes(QList<Episode>)), this, SLOT(on_database_foundEpisodes(QList<Episode>)));
+    connect(d->database, &TheTVDB::foundEpisodes, this, &SeasonWidget::on_database_foundEpisodes);
 }
 
 SeasonWidget::~SeasonWidget() {

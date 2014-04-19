@@ -37,7 +37,7 @@ int TheTVDB::searchShows(QString name) {
     QString url = "http://www.thetvdb.com/api/GetSeries.php?seriesname=" + name;
     QNetworkReply *reply = d->netAccessMgr.get(QNetworkRequest(url));
     reply->setProperty("id", QVariant(sID));
-    connect(reply, SIGNAL(finished()), this, SLOT(on_reply_finished()));
+    connect(reply, &QNetworkReply::finished, this, &TheTVDB::on_reply_finished);
 
     return sID;
 }
@@ -47,7 +47,7 @@ void TheTVDB::getSeasons(Show show) {
     QString url = "http://www.thetvdb.com/api/" + key + "/series/" + QString::number(show.id) + "/all/en.xml";
     QNetworkReply *reply = d->netAccessMgr.get(QNetworkRequest(url));
     reply->setProperty("show", QVariant::fromValue(show));
-    connect(reply, SIGNAL(finished()), this, SLOT(on_reply_finished()));
+    connect(reply, &QNetworkReply::finished, this, &TheTVDB::on_reply_finished);
 }
 
 void TheTVDB::getEpisodes(Season season) {
@@ -55,7 +55,7 @@ void TheTVDB::getEpisodes(Season season) {
     QString url = "http://www.thetvdb.com/api/" + key + "/series/" + QString::number(season.show.id) + "/all/en.xml";
     QNetworkReply *reply = d->netAccessMgr.get(QNetworkRequest(url));
     reply->setProperty("season", QVariant::fromValue(season));
-    connect(reply, SIGNAL(finished()), this, SLOT(on_reply_finished()));
+    connect(reply, &QNetworkReply::finished, this, &TheTVDB::on_reply_finished);
 }
 
 void TheTVDB::on_reply_finished() {

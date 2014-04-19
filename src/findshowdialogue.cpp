@@ -19,7 +19,7 @@ FindShowDialogue::FindShowDialogue(QWidget *parent) :
     connect(this, SIGNAL(accepted()), this, SLOT(on_accepted()));
 
     d->database = new TheTVDB(this);
-    connect(d->database, SIGNAL(foundShows(int,QList<Show>)), this, SLOT(on_database_foundShows(int,QList<Show>)));
+    connect(d->database, &TheTVDB::foundShows, this, &FindShowDialogue::on_database_foundShows);
 }
 
 FindShowDialogue::~FindShowDialogue() {
