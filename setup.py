@@ -16,6 +16,9 @@ setup(
     install_requires=[
         "pytvdbapi"
     ],
+    entry_points = {
+        "console_scripts": ["tvnamer = tvnamer:main"]
+    },
     classifiers=[
         "Topic :: Internet",
         "Topic :: Multimedia :: Video",
