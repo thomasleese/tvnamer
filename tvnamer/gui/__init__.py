@@ -7,8 +7,9 @@ class DirectoryDropWidget(QtGui.QLabel):
     def __init__(self):
         super().__init__()
         self.setAcceptDrops(True)
-        self.setStyleSheet("background-color:black;")
-        self.setText("Hello.")
+        self.setStyleSheet("background: white;")
+        self.setAlignment(QtCore.Qt.AlignCenter)
+        self.setPixmap("tvnamer/gui/resources/drop_target.svg")
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls() and len(e.mimeData().urls()) == 1 and \
@@ -26,12 +27,14 @@ class MainWindow(QtGui.QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("TVNamer")
-        self.setMinimumSize(480, 480)
+        self.setMinimumSize(512, 512)
 
         layout = QtGui.QGridLayout()
         layout.addWidget(DirectoryDropWidget(), 0, 0)
         layout.setColumnStretch(0, 1)
         layout.setRowStretch(0, 1)
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
         self.show()

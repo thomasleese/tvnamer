@@ -19,7 +19,7 @@ setup(
         "pytvdbapi",
         "pyside"
     ],
-    entry_points = {
+    entry_points={
         "console_scripts": [
             "tvnamer = tvnamer:main",
             "tvnamer-cli = tvnamer.cli:main",
