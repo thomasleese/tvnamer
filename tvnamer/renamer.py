@@ -65,3 +65,14 @@ class Renamer:
                 params = self.fill_out_params(params, self.tvdb)
                 output_filename = output_format.format(**params)
                 yield filename, output_filename
+
+    def perform_rename(self, directory, table):
+        for old, new in table:
+            old_full_path = os.path.normpath(os.path.join(directory, old))
+            new_full_path = os.path.normpath(os.path.join(directory, new))
+
+            # ensure new directory exists
+            new_dir = os.path.dirname(new_full_path)
+            os.makedirs(new_dir, exist_ok=True)
+
+            os.rename(old_full_path, new_full_path)

@@ -26,7 +26,13 @@ def main():
                           season_number=args.season_number,
                           episode_number=args.episode_number,
                           episode_name=args.episode_name)
-    table = r.rename_table(args.directory, args.input_regex,
-                           args.output_format, default_params)
+    table = list(r.rename_table(args.directory, args.input_regex,
+                                args.output_format, default_params))
+
+    print("Assuming working directory of:", args.directory)
     for old, new in table:
         print(old, "->", new)
+
+    input("Press enter to confirm.")
+
+    r.perform_rename(args.directory, table)
