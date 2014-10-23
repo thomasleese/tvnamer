@@ -22,20 +22,20 @@ class Renamer:
     @staticmethod
     def normalise_params(params):
         def normalise(key, value):
-            if key == "show_name":
+            if key in ["show_name", "episode_name"]:
                 return str(value)
             elif key in ["episode_number", "season_number"]:
                 return int(value)
             else:
                 raise ValueError("Unknown parameter: '{}'.".format(key))
 
-        return {key: normalise(key, value) for key, value in params.items()}
+        return {key: normalise(key, value) for key, value in params.items() if value is not None}
 
     @staticmethod
     def fill_out_params(params, tvdb):
         if "show_name" not in params or "season_number" not in params \
             or "episode_number" not in params:
-            raise ValueError("'show', 'season_number', 'episode_number' must be provided.")
+            raise ValueError("'show_name', 'season_number', 'episode_number' must be provided.")
 
         show = tvdb.search(params["show_name"], "en")
         if len(show) != 1:
@@ -49,14 +49,19 @@ class Renamer:
 
         return params
 
-    def rename_table(self, directory, input_regex, output_format):
+    def rename_table(self, directory, input_regex, output_format,
+                     default_params=None):
         input_pattern = re.compile(input_regex)
 
         filenames = self.flat_file_list(directory)
         for filename in filenames:
-            thing = input_pattern.search(filename)
-            if thing is not None:
-                params = self.normalise_params(thing.groupdict())
+            match = input_pattern.search(filename)
+            if match is not None:
+                params = dict(default_params or {})
+                for key, value in match.groupdict().items():
+                    params[key] = value
+
+                params = self.normalise_params(params)
                 params = self.fill_out_params(params, self.tvdb)
                 output_filename = output_format.format(**params)
                 yield filename, output_filename

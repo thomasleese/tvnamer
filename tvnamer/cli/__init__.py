@@ -11,6 +11,10 @@ def build_argument_parser():
                         help="Regular expression for the input file names.")
     parser.add_argument("output_format",
                         help="Output file name format string.")
+    parser.add_argument("--show_name", type=str)
+    parser.add_argument("--season_number", type=int)
+    parser.add_argument("--episode_number", type=int)
+    parser.add_argument("--episode_name", type=str)
     return parser
 
 def main():
@@ -18,7 +22,11 @@ def main():
     args = parser.parse_args()
 
     r = renamer.Renamer(args.api_key)
+    default_params = dict(show_name=args.show_name,
+                          season_number=args.season_number,
+                          episode_number=args.episode_number,
+                          episode_name=args.episode_name)
     table = r.rename_table(args.directory, args.input_regex,
-                           args.output_format)
+                           args.output_format, default_params)
     for old, new in table:
         print(old, "->", new)
