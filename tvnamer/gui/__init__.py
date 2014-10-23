@@ -85,8 +85,23 @@ class SetUpRenamerDialogue(QtGui.QDialog):
             "episode_name": self.episode_name_text.text(),
         }
 
+        # remove empty values
+        default_params = {k: v for k, v in default_params.items() if v}
+
         return Renamer(self.api_key, self.directory, input_regex,
                        output_format, default_params)
+
+
+class RenameTable(QtGui.QListWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def set_table(self, table):
+        self.clear()
+        print(table)
+        for old, new in table:
+            print(old, new)
+            self.addItem("{} ↦ {}".format(old, new))
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -100,7 +115,12 @@ class MainWindow(QtGui.QMainWindow):
 
         self.drop_target = VideoFileFolderDropTarget(self)
         self.drop_target.dropped.connect(self.on_drop_target_dropped)
-        self.setCentralWidget(self.drop_target)
+        self.rename_table = RenameTable(self)
+        self.stacked_widget = QtGui.QStackedWidget()
+        self.stacked_widget.addWidget(self.drop_target)
+        self.stacked_widget.addWidget(self.rename_table)
+        self.stacked_widget.setCurrentWidget(self.drop_target)
+        self.setCentralWidget(self.stacked_widget)
 
         self.status_bar = QtGui.QStatusBar(self)
         self.setStatusBar(self.status_bar)
@@ -130,7 +150,8 @@ class MainWindow(QtGui.QMainWindow):
         dialogue = SetUpRenamerDialogue(path, self.settings.value("api_key"))
         if dialogue.exec_() == QtGui.QDialog.DialogCode.Accepted:
             renamer = dialogue.renamer
-            print(list(renamer.table))
+            self.rename_table.set_table(renamer.table)
+            self.stacked_widget.setCurrentWidget(self.rename_table)
 
 
 def main():
