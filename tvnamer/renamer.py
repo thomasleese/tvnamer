@@ -38,8 +38,7 @@ class Renamer:
             raise ValueError("'series_name', 'season_number', 'episode_number' must be provided.")
 
         show = tvdb.search(params["series_name"], "en")
-        if len(show) != 1:
-            raise ValueError("Ambigious series name.")
+
         show = show[0]
         season = show[params["season_number"]]
         episode = season[params["episode_number"]]
