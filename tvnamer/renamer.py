@@ -1,3 +1,4 @@
+import re
 import os
 
 import pytvdbapi.api as tvdb
@@ -24,7 +25,13 @@ class Renamer:
                         continue
                 yield full_path
 
-    def rename(self, directory):
+    def rename_table(self, directory, input_regex, output_format):
+        input_pattern = re.compile(input_regex)
+
         filenames = self.flat_file_list(directory, self.include_extensions)
-        for file in filenames:
-            print(file)
+        for filename in filenames:
+            thing = input_pattern.search(filename)
+            if thing is not None:
+                params = thing.groupdict()
+                output_filename = output_format.format(**params)
+                yield filename, output_filename
