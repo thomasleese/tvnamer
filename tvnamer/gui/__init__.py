@@ -97,7 +97,7 @@ class RenameTable(QtGui.QListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setStyleSheet("QListWidget::item { margin: 2px; }")
+        self.setStyleSheet("QListWidget::item { margin: 3px; }")
 
     def set_table(self, table):
         self.clear()
