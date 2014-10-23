@@ -5,18 +5,21 @@ import pytvdbapi.api as tvdb
 
 
 class Renamer:
-    def __init__(self, api_key):
+    def __init__(self, api_key, directory, input_regex, output_format,
+                 default_params=None):
         self.tvdb = tvdb.TVDB(api_key)
+        self.directory = os.path.normpath(directory)
+        self.input_pattern = re.compile(input_regex)
+        self.output_format = output_format
+        self.default_params = default_params or {}
 
-    @staticmethod
-    def flat_file_list(directory):
-        directory = os.path.normpath(directory)
-
-        for dirpath, dirnames, filenames in os.walk(directory):
+    @property
+    def flat_file_list(self):
+        for dirpath, dirnames, filenames in os.walk(self.directory):
             for filename in filenames:
                 full_path = os.path.join(dirpath, filename)
                 # remove directory from the start of the full path
-                full_path = full_path[len(directory)+1:]
+                full_path = full_path[len(self.directory)+1:]
                 yield full_path
 
     @staticmethod
@@ -39,7 +42,6 @@ class Renamer:
 
         search_results = tvdb.search(params["series_name"], "en")
 
-
         series = search_results[0]
         season = series[params["season_number"]]
         episode = season[params["episode_number"]]
@@ -49,27 +51,27 @@ class Renamer:
 
         return params
 
-    def rename_table(self, directory, input_regex, output_format,
-                     default_params=None):
-        input_pattern = re.compile(input_regex)
-
-        filenames = self.flat_file_list(directory)
-        for filename in filenames:
-            match = input_pattern.search(filename)
+    @property
+    def table(self):
+        for filename in self.flat_file_list:
+            match = self.input_pattern.search(filename)
             if match is not None:
-                params = dict(default_params or {})
+                params = dict(self.default_params)
                 for key, value in match.groupdict().items():
                     params[key] = value
 
                 params = self.normalise_params(params)
                 params = self.fill_out_params(params, self.tvdb)
-                output_filename = output_format.format(**params)
+                output_filename = self.output_format.format(**params)
                 yield filename, output_filename
 
-    def perform_rename(self, directory, table):
+    def perform_rename(self, table=None):
+        if table is None:
+            table = self.table
+
         for old, new in table:
-            old_full_path = os.path.normpath(os.path.join(directory, old))
-            new_full_path = os.path.normpath(os.path.join(directory, new))
+            old_full_path = os.path.normpath(os.path.join(self.directory, old))
+            new_full_path = os.path.normpath(os.path.join(self.directory, new))
 
             # ensure new directory exists
             new_dir = os.path.dirname(new_full_path)

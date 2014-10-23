@@ -21,18 +21,18 @@ def main():
     parser = build_argument_parser()
     args = parser.parse_args()
 
-    r = renamer.Renamer(args.api_key)
     default_params = dict(series_name=args.series_name,
                           season_number=args.season_number,
                           episode_number=args.episode_number,
                           episode_name=args.episode_name)
-    table = list(r.rename_table(args.directory, args.input_regex,
-                                args.output_format, default_params))
+    r = renamer.Renamer(args.api_key, args.directory, args.input_regex,
+                        args.output_format, default_params)
+    table = list(r.table)
 
-    print("Assuming working directory of:", args.directory)
+    print("Assuming working directory of:", r.directory)
     for old, new in table:
         print(old, "->", new)
 
     input("Press enter to confirm.")
 
-    r.perform_rename(args.directory, table)
+    r.perform_rename(table)
