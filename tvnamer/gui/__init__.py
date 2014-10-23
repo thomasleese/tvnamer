@@ -77,7 +77,8 @@ class SetUpRenamerDialogue(QtGui.QDialog):
         item.setFlags(flags)
         return item
 
-    def build_renamer(self):
+    @property
+    def renamer(self):
         api_key = self.api_key_text.text()
         input_regex = self.input_regex_text.text()
         output_format = self.output_format_text.text()
@@ -98,8 +99,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowTitle("TVNamer")
         self.setMinimumSize(500, 400)
 
-        self.menu_bar = self.build_menu_bar()
-        self.setMenuBar(self.menu_bar)
+        self.init_menu_bar(self.menuBar())
 
         self.drop_target = VideoFileFolderDropTarget(self)
         self.drop_target.dropped.connect(self.on_drop_target_dropped)
@@ -110,17 +110,15 @@ class MainWindow(QtGui.QMainWindow):
 
         self.show()
 
-    def build_menu_bar(self):
-        menu_bar = QtGui.QMenuBar(self)
+    def init_menu_bar(self, menu_bar=None):
         tools_menu = menu_bar.addMenu("Tools")
         tools_menu.addAction(QtGui.QAction("Set API Key", self))
-        return menu_bar
 
     @QtCore.Slot(str)
     def on_drop_target_dropped(self, path):
         dialogue = SetUpRenamerDialogue(path)
         if dialogue.exec_() == QtGui.QDialog.DialogCode.Accepted:
-            renamer = dialogue.build_renamer()
+            renamer = dialogue.renamer
             print(list(renamer.table))
 
 
