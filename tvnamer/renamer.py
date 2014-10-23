@@ -27,9 +27,27 @@ class Renamer:
             elif key in ["episode", "season"]:
                 return int(value)
             else:
-                raise ValueError("Unknown parameter: '{}'".format(key))
+                raise ValueError("Unknown parameter: '{}'.".format(key))
 
         return {key: normalise(key, value) for key, value in params.items()}
+
+    @staticmethod
+    def fill_out_params(params, tvdb):
+        if "show" not in params or "season" not in params \
+            or "episode" not in params:
+            raise ValueError("'show', 'season', 'episode' must be provided.")
+
+        show = tvdb.search(params["show"], "en")
+        if len(show) != 1:
+            raise ValueError("Ambigious show name.")
+        show = show[0]
+        season = show[params["season"]]
+        episode = season[params["episode"]]
+
+        if "episode_name" not in params:
+            params["episode_name"] = episode.EpisodeName
+
+        return params
 
     def rename_table(self, directory, input_regex, output_format):
         input_pattern = re.compile(input_regex)
@@ -39,5 +57,6 @@ class Renamer:
             thing = input_pattern.search(filename)
             if thing is not None:
                 params = self.normalise_params(thing.groupdict())
+                params = self.fill_out_params(params, self.tvdb)
                 output_filename = output_format.format(**params)
                 yield filename, output_filename
