@@ -28,14 +28,12 @@ class VideoFileFolderDropTarget(QtGui.QLabel, QtCore.QObject):
 
 
 class SetUpRenamerDialogue(QtGui.QDialog):
-    def __init__(self, directory, parent=None):
+    def __init__(self, directory, api_key, parent=None):
         super().__init__(parent)
         self.setWindowTitle(directory)
 
         self.directory = directory
-
-        self.api_key_text = QtGui.QLineEdit()
-        self.api_key_text.setPlaceholderText("API key")
+        self.api_key = api_key
 
         self.input_regex_text = QtGui.QLineEdit()
         self.input_regex_text.setPlaceholderText("Input Regular Expression")
@@ -62,7 +60,6 @@ class SetUpRenamerDialogue(QtGui.QDialog):
         self.button_box.rejected.connect(self.reject)
 
         layout = QtGui.QVBoxLayout()
-        layout.addWidget(self.api_key_text)
         layout.addWidget(self.input_regex_text)
         layout.addWidget(self.output_format_text)
         layout.addWidget(self.extras_form)
@@ -79,7 +76,6 @@ class SetUpRenamerDialogue(QtGui.QDialog):
 
     @property
     def renamer(self):
-        api_key = self.api_key_text.text()
         input_regex = self.input_regex_text.text()
         output_format = self.output_format_text.text()
         default_params = {
@@ -89,14 +85,15 @@ class SetUpRenamerDialogue(QtGui.QDialog):
             "episode_name": self.episode_name_text.text(),
         }
 
-        return Renamer(api_key, self.directory, input_regex, output_format,
-                       default_params)
+        return Renamer(self.api_key, self.directory, input_regex,
+                       output_format, default_params)
 
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("TVNamer")
+
+        self.setWindowTitle("TV Namer")
         self.setMinimumSize(500, 400)
 
         self.init_menu_bar(self.menuBar())
@@ -110,13 +107,27 @@ class MainWindow(QtGui.QMainWindow):
 
         self.show()
 
+        self.settings = QtCore.QSettings()
+        if not self.settings.contains("api_key"):
+            self.set_api_key()
+
+    def set_api_key(self):
+        api_key, ok = QtGui.QInputDialog.getText(self, "Enter API key",
+                                                "API key:",
+                                                QtGui.QLineEdit.Normal,
+                                                self.settings.value("api_key"))
+        if ok:
+            self.settings.setValue("api_key", api_key)
+
     def init_menu_bar(self, menu_bar=None):
         tools_menu = menu_bar.addMenu("Tools")
-        tools_menu.addAction(QtGui.QAction("Set API Key", self))
+        api_key_action = QtGui.QAction("Set API Key", self)
+        api_key_action.activated.connect(self.set_api_key)
+        tools_menu.addAction(api_key_action)
 
     @QtCore.Slot(str)
     def on_drop_target_dropped(self, path):
-        dialogue = SetUpRenamerDialogue(path)
+        dialogue = SetUpRenamerDialogue(path, self.settings.value("api_key"))
         if dialogue.exec_() == QtGui.QDialog.DialogCode.Accepted:
             renamer = dialogue.renamer
             print(list(renamer.table))
@@ -124,5 +135,8 @@ class MainWindow(QtGui.QMainWindow):
 
 def main():
     app = QtGui.QApplication(sys.argv)
+    app.setOrganizationName("Tom Leese")
+    app.setOrganizationDomain("tomleese.me.uk")
+    app.setApplicationName("TV Namer")
     window = MainWindow()
     sys.exit(app.exec_())
