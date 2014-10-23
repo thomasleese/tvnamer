@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from setuptools import setup
 
+
 with open("README.rst") as fd:
     long_description = fd.read()
 
@@ -13,6 +14,7 @@ setup(
     author_email="tom@tomleese.me.uk",
     url="https://github.com/tomleese/tvnamer",
     packages=["tvnamer"],
+    test_suite="tests",
     install_requires=[
         "pytvdbapi"
     ],

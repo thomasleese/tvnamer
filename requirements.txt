@@ -1,2 +1,1 @@
-httplib2==0.9
-pytvdbapi==0.4.0
+-e .
