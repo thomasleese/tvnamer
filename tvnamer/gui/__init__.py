@@ -31,6 +31,7 @@ class SetUpRenamerDialogue(QtGui.QDialog):
     def __init__(self, directory, api_key, parent=None):
         super().__init__(parent)
         self.setWindowTitle(directory)
+        self.setMinimumWidth(480)
 
         self.directory = directory
         self.api_key = api_key
@@ -41,7 +42,7 @@ class SetUpRenamerDialogue(QtGui.QDialog):
         self.output_format_text = QtGui.QLineEdit()
         self.output_format_text.setPlaceholderText("Output Format")
 
-        self.extras_form = QtGui.QWidget()
+        self.extras_form = QtGui.QGroupBox("Default Parameters")
         self.series_name_text = QtGui.QLineEdit()
         self.season_number_text = QtGui.QSpinBox()
         self.season_number_text.setMinimum(0)
