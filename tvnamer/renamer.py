@@ -37,10 +37,11 @@ class Renamer:
             or "episode_number" not in params:
             raise ValueError("'series_name', 'season_number', 'episode_number' must be provided.")
 
-        show = tvdb.search(params["series_name"], "en")
+        search_results = tvdb.search(params["series_name"], "en")
 
-        show = show[0]
-        season = show[params["season_number"]]
+
+        series = search_results[0]
+        season = series[params["season_number"]]
         episode = season[params["episode_number"]]
 
         if "episode_name" not in params:
