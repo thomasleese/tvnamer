@@ -129,7 +129,10 @@ class InfoStatusBar(QtGui.QStatusBar):
         self.addWidget(self.rename_button, 0)
 
     def update(self, count):
-        self.count_label.setText("{} items".format(count))
+        if count == 1:
+            self.count_label.setText("1 item")
+        else:
+            self.count_label.setText("{} items".format(count))
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -180,11 +183,11 @@ class MainWindow(QtGui.QMainWindow):
     def on_drop_target_dropped(self, path):
         dialogue = SetUpRenamerDialogue(path, self.settings.value("api_key"))
         if dialogue.exec_() == QtGui.QDialog.DialogCode.Accepted:
-            renamer = dialogue.renamer
-            table = list(renamer.table)
-            self.rename_table.set_table(table)
+            self.renamer = dialogue.renamer
+            self.table = list(self.renamer.table)
+            self.rename_table.set_table(self.table)
             self.stacked_widget.setCurrentWidget(self.rename_table)
-            self.status_bar.update(len(table))
+            self.status_bar.update(len(self.table))
             self.status_bar.show()
 
     def on_clear_clicked(self):
@@ -192,6 +195,12 @@ class MainWindow(QtGui.QMainWindow):
         self.status_bar.hide()
 
     def on_rename_clicked(self):
+        self.renamer.perform_rename(self.table)
+
+        box = QtGui.QMessageBox()
+        box.setText("Your files have been renamed.")
+        box.exec_()
+
         self.stacked_widget.setCurrentWidget(self.drop_target)
         self.status_bar.hide()
 
