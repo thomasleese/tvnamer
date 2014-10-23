@@ -22,9 +22,9 @@ class Renamer:
     @staticmethod
     def normalise_params(params):
         def normalise(key, value):
-            if key == "show":
+            if key == "show_name":
                 return str(value)
-            elif key in ["episode", "season"]:
+            elif key in ["episode_number", "season_number"]:
                 return int(value)
             else:
                 raise ValueError("Unknown parameter: '{}'.".format(key))
@@ -33,16 +33,16 @@ class Renamer:
 
     @staticmethod
     def fill_out_params(params, tvdb):
-        if "show" not in params or "season" not in params \
-            or "episode" not in params:
-            raise ValueError("'show', 'season', 'episode' must be provided.")
+        if "show_name" not in params or "season_number" not in params \
+            or "episode_number" not in params:
+            raise ValueError("'show', 'season_number', 'episode_number' must be provided.")
 
-        show = tvdb.search(params["show"], "en")
+        show = tvdb.search(params["show_name"], "en")
         if len(show) != 1:
             raise ValueError("Ambigious show name.")
         show = show[0]
-        season = show[params["season"]]
-        episode = season[params["episode"]]
+        season = show[params["season_number"]]
+        episode = season[params["episode_number"]]
 
         if "episode_name" not in params:
             params["episode_name"] = episode.EpisodeName
