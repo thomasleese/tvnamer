@@ -16,7 +16,8 @@ setup(
     packages=["tvnamer"],
     test_suite="tests",
     install_requires=[
-        "pytvdbapi"
+        "pytvdbapi",
+        "pyside"
     ],
     entry_points = {
         "console_scripts": [
@@ -28,9 +29,8 @@ setup(
     classifiers=[
         "Topic :: Internet",
         "Topic :: Multimedia :: Video",
-        "Development Status :: 1 - Planning",
+        "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4"

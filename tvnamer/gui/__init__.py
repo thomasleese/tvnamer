@@ -1,2 +1,11 @@
+from PySide import QtCore, QtGui
+
+
+class MainWindow(QtGui.QWidget):
+    pass
+
+
 def main():
-    return NotImplemented
+    app = QtGui.QApplication(sys.argv)
+    window = MainWindow()
+    sys.exit(app.exec_())
