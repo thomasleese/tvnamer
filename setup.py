@@ -17,7 +17,11 @@ setup(
         "pytvdbapi"
     ],
     entry_points = {
-        "console_scripts": ["tvnamer = tvnamer:main"]
+        "console_scripts": [
+            "tvnamer = tvnamer:main",
+            "tvnamer-cli = tvnamer.cli:main",
+            "tvnamer-gui = tvnamer.gui:main",
+        ]
     },
     classifiers=[
         "Topic :: Internet",
