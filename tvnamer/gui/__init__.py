@@ -1,2 +1,2 @@
 def main():
-    print("GUI")
+    return NotImplemented
