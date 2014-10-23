@@ -96,12 +96,40 @@ class RenameTable(QtGui.QListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.setStyleSheet("QListWidget::item { margin: 2px; }")
+
     def set_table(self, table):
         self.clear()
-        print(table)
+
         for old, new in table:
-            print(old, new)
-            self.addItem("{} ↦ {}".format(old, new))
+            item = QtGui.QListWidgetItem("{}\n↳ {}".format(old, new))
+            font = item.font()
+            font.setPointSize(int(font.pointSize() * 1.3))
+            item.setFont(font)
+            self.addItem(item)
+
+
+class InfoStatusBar(QtGui.QStatusBar):
+    clear_clicked = QtCore.Signal()
+    rename_clicked = QtCore.Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.clear_button = QtGui.QPushButton("Clear", self)
+        self.clear_button.clicked.connect(lambda: self.clear_clicked.emit())
+        self.addWidget(self.clear_button, 0)
+
+        self.count_label = QtGui.QLabel("0 items", self)
+        self.count_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.addWidget(self.count_label, 1)
+
+        self.rename_button = QtGui.QPushButton("Rename", self)
+        self.rename_button.clicked.connect(lambda: self.rename_clicked.emit())
+        self.addWidget(self.rename_button, 0)
+
+    def update(self, count):
+        self.count_label.setText("{} items".format(count))
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -122,7 +150,10 @@ class MainWindow(QtGui.QMainWindow):
         self.stacked_widget.setCurrentWidget(self.drop_target)
         self.setCentralWidget(self.stacked_widget)
 
-        self.status_bar = QtGui.QStatusBar(self)
+        self.status_bar = InfoStatusBar(self)
+        self.status_bar.clear_clicked.connect(self.on_clear_clicked)
+        self.status_bar.rename_clicked.connect(self.on_rename_clicked)
+        self.status_bar.hide()
         self.setStatusBar(self.status_bar)
 
         self.show()
@@ -150,8 +181,19 @@ class MainWindow(QtGui.QMainWindow):
         dialogue = SetUpRenamerDialogue(path, self.settings.value("api_key"))
         if dialogue.exec_() == QtGui.QDialog.DialogCode.Accepted:
             renamer = dialogue.renamer
-            self.rename_table.set_table(renamer.table)
+            table = list(renamer.table)
+            self.rename_table.set_table(table)
             self.stacked_widget.setCurrentWidget(self.rename_table)
+            self.status_bar.update(len(table))
+            self.status_bar.show()
+
+    def on_clear_clicked(self):
+        self.stacked_widget.setCurrentWidget(self.drop_target)
+        self.status_bar.hide()
+
+    def on_rename_clicked(self):
+        self.stacked_widget.setCurrentWidget(self.drop_target)
+        self.status_bar.hide()
 
 
 def main():
