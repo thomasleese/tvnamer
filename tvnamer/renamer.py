@@ -32,13 +32,14 @@ class Renamer:
             else:
                 raise ValueError("Unknown parameter: '{}'.".format(key))
 
-        return {key: normalise(key, value) for key, value in params.items() if value is not None}
+        return {k: normalise(k, v) for k, v in params.items() if v is not None}
 
     @staticmethod
     def fill_out_params(params, tvdb):
         if "series_name" not in params or "season_number" not in params \
             or "episode_number" not in params:
-            raise ValueError("'series_name', 'season_number', 'episode_number' must be provided.")
+            raise ValueError("'series_name', 'season_number', " \
+                             "'episode_number' must be provided.")
 
         search_results = tvdb.search(params["series_name"], "en")
 

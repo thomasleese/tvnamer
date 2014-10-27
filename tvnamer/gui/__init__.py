@@ -51,12 +51,16 @@ class SetUpRenamerDialogue(QtGui.QDialog):
         self.episode_name_text = QtGui.QLineEdit()
         self.extras_form_layout = QtGui.QFormLayout(self)
         self.extras_form_layout.addRow("Series Name", self.series_name_text)
-        self.extras_form_layout.addRow("Season Number", self.season_number_text)
-        self.extras_form_layout.addRow("Episode Number", self.episode_number_text)
+        self.extras_form_layout.addRow("Season Number",
+                                       self.season_number_text)
+        self.extras_form_layout.addRow("Episode Number",
+                                       self.episode_number_text)
         self.extras_form_layout.addRow("Episode Name", self.episode_name_text)
         self.extras_form.setLayout(self.extras_form_layout)
 
-        self.button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Cancel, QtCore.Qt.Horizontal, self)
+        self.button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | \
+                                                 QtGui.QDialogButtonBox.Cancel,
+                                                 QtCore.Qt.Horizontal, self)
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
