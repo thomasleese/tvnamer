@@ -2,8 +2,8 @@
 from setuptools import setup
 
 
-with open("README.rst") as fd:
-    long_description = fd.read()
+with open("README.rst") as file:
+    long_description = file.read()
 
 setup(
     name="tvnamer",
