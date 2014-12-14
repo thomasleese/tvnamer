@@ -22,7 +22,9 @@ setup(
     entry_points={
         "console_scripts": [
             "tvnamer = tvnamer:main",
-            "tvnamer-cli = tvnamer.cli:main",
+            "tvnamer-cli = tvnamer.cli:main"
+        ],
+        'gui_scripts': [
             "tvnamer-gui = tvnamer.gui:main",
         ]
     },
