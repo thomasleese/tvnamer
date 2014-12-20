@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-from setuptools import setup
+#!/usr/bin/env python
+from setuptools import find_packages, setup
 
 
 with open("README.rst") as file:
@@ -14,7 +14,7 @@ setup(
     author="Tom Leese",
     author_email="inbox@tomleese.me.uk",
     url="https://github.com/tomleese/tvnamer",
-    packages=["tvnamer"],
+    packages=find_packages(exclude=['tests', 'tests.*']),
     test_suite="tests",
     install_requires=[
         "pytvdbapi",
