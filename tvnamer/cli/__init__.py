@@ -17,6 +17,7 @@ def build_argument_parser():
     parser.add_argument("--episode_name", type=str)
     return parser
 
+
 def main():
     parser = build_argument_parser()
     args = parser.parse_args()

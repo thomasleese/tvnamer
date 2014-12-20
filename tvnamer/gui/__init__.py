@@ -58,7 +58,7 @@ class SetUpRenamerDialogue(QtGui.QDialog):
         self.extras_form_layout.addRow("Episode Name", self.episode_name_text)
         self.extras_form.setLayout(self.extras_form_layout)
 
-        self.button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | \
+        self.button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok |
                                                  QtGui.QDialogButtonBox.Cancel,
                                                  QtCore.Qt.Horizontal, self)
         self.button_box.accepted.connect(self.accept)
@@ -171,10 +171,11 @@ class MainWindow(QtGui.QMainWindow):
             self.set_api_key()
 
     def set_api_key(self):
+        existing_value = self.settings.value("api_key")
         api_key, ok = QtGui.QInputDialog.getText(self, "Enter API key",
-                                                "API key:",
-                                                QtGui.QLineEdit.Normal,
-                                                self.settings.value("api_key"))
+                                                 "API key:",
+                                                 QtGui.QLineEdit.Normal,
+                                                 existing_value)
         if ok:
             self.settings.setValue("api_key", api_key)
 

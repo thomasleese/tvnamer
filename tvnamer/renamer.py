@@ -37,8 +37,8 @@ class Renamer:
     @staticmethod
     def fill_out_params(params, tvdb):
         if "series_name" not in params or "season_number" not in params \
-            or "episode_number" not in params:
-            raise ValueError("'series_name', 'season_number', " \
+                or "episode_number" not in params:
+            raise ValueError("'series_name', 'season_number', "
                              "'episode_number' must be provided.")
 
         search_results = tvdb.search(params["series_name"], "en")
