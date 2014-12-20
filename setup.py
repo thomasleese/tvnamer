@@ -5,9 +5,10 @@ from setuptools import setup
 with open("README.rst") as file:
     long_description = file.read()
 
+
 setup(
     name="tvnamer",
-    version="1.0.0-dev",
+    version="1.0.0",
     description="Utility to rename lots of TV video files using the TheTVDB.",
     long_description=long_description,
     author="Tom Leese",
