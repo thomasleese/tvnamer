@@ -11,7 +11,7 @@ setup(
     description="Utility to rename lots of TV video files using the TheTVDB.",
     long_description=long_description,
     author="Tom Leese",
-    author_email="tom@tomleese.me.uk",
+    author_email="inbox@tomleese.me.uk",
     url="https://github.com/tomleese/tvnamer",
     packages=["tvnamer"],
     test_suite="tests",
