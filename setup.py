@@ -20,6 +20,10 @@ setup(
         "pytvdbapi",
         "pyside"
     ],
+    setup_requires=[
+        'sphinx',
+        'pygments'
+    ],
     entry_points={
         "console_scripts": [
             "tvnamer-cli = tvnamer.cli:main"
