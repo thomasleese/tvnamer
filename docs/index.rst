@@ -1,6 +1,8 @@
 TVNamer
 =======
 
+This is the documentation for version |release|, generated |today|.
+
 User Guide
 ----------
 
