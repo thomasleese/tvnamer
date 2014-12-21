@@ -1,21 +1,19 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from setuptools import find_packages, setup
 
 
 with open("README.rst") as file:
     long_description = file.read()
 
-
 setup(
-    name="tv-namer",
+    name="tvnamer",
     version="1.0.0",
     description="Utility to rename lots of TV video files using the TheTVDB.",
     long_description=long_description,
     author="Tom Leese",
     author_email="inbox@tomleese.me.uk",
     url="https://github.com/tomleese/tvnamer",
-    packages=find_packages(exclude=['tests', 'tests.*']),
-    test_suite="tests",
+    packages=find_packages(),
     install_requires=[
         "pytvdbapi",
         "pyside"
