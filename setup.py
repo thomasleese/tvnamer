@@ -7,7 +7,7 @@ with open("README.rst") as file:
 
 
 setup(
-    name="tvnamer",
+    name="tv-namer",
     version="1.0.0",
     description="Utility to rename lots of TV video files using the TheTVDB.",
     long_description=long_description,

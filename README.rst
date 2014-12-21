@@ -1,5 +1,5 @@
 TV Namer
-======
+========
 
 .. image:: https://travis-ci.org/tomleese/tvnamer.svg?branch=master
     :target: https://travis-ci.org/tomleese/tvnamer

@@ -60,7 +60,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'TVNamer'
+project = 'TV Namer'
 copyright = '2014, Tom Leese'
 
 # The version info for the project you're documenting, acts as replacement for
